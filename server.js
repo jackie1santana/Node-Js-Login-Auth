@@ -21,7 +21,7 @@ mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology
 }))
   .catch((err) => console.log(err));
 
-// routes
+// routess
 
 //HOME
 app.get('/', (req, res, next) => {
