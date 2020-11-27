@@ -1,6 +1,8 @@
 const express = require('express')
-const Router = require('./controller/routes/routes')
+const Router = require('./routes/authRoutes')
 require('dotenv').config()
+const mongoose = require('mongoose');
+require('./controller/authControllers')
 
 const app = express()
 
@@ -12,6 +14,19 @@ app.use(express.urlencoded({extended: false}))
 
 app.use(Router)
 
-app.listen(PORT, () => {
-    console.log(`REST api server running on port ${PORT}`)
+
+mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
+  .then((result) => app.listen(PORT, () => {
+    console.log(`REST api server running on port ${PORT} | Database is connected`)
+}))
+  .catch((err) => console.log(err));
+
+// routes
+
+//HOME
+app.get('/', (req, res, next) => {
+    res.send('Express')
+    next()
 })
+
+
