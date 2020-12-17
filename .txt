@@ -7,17 +7,14 @@ module.exports = async (req, res, next) => {
    
 
     
- 
+    try{
         // const user = User.findOne( { email: req.body.email  })
     
          
-      if(!req.header('Authorization')) return next()
+        let token = await stringify(req.header('Authorization').split(' ')[1])
+        
 
-        const authHeader = req.header('Authorization')
-        const bearerToken = authHeader.split(' ')
-        const token = bearerToken[1]
-
-       
+        token = parse(token)
 
         
         // console.log(token)
@@ -28,20 +25,14 @@ module.exports = async (req, res, next) => {
         console.log(token)
         if(!token) return res.status(401).send('Access Denied')
     
-         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
-            if(err){
-                return next()
-            }
-
-            req.user = payload
-            next()
-        })
+        const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
         //verified variable returns the id number in user
        
-       
+       req.user = verified
       
-        
-   
-        // res.status(401).send({err, error: 'Please Authenticate'})
-     
+        next()
+    }catch(err){
+        res.status(401).send({err, error: 'Please Authenticate'})
+        return 
+    }
 }

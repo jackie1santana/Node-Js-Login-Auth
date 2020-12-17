@@ -41,21 +41,27 @@ module.exports.signup_get = (req, res, next) => {
 }
 
 module.exports.signup_post = async (req, res, next) => {
-
+    const user = new User(req.body)
    try{
-    const { email, password } = req.body;
+   
+   
+    // const user = await User.findOne( { email: req.body.email})
+  
+ 
+   
 
-    const user = await User.create({ 
-        email,
-        password 
-     })
-        console.log(email)
+     const token = await jwt.sign({ _id: user._id}, process.env.ACCESS_TOKEN_SECRET)
+
+     await user.save()
+    
+     
+        console.log(user)
 
      const emailExist = await User.findOne( { email: req.body.email  })
      if (emailExist) return res.status(400).send('email already exist')
  
        
-     await res.redirect('/user')
+     await res.status(201).send(user).redirect('/user')
 
      console.log('sign up post')
     next()
@@ -75,8 +81,8 @@ module.exports.login_get = (req, res, next) => {
 }
 
 module.exports.login_post = async (req, res, next) => {
-
-    const user = await User.findOne( { email: req.body.email  })
+    
+    const user = await User.findOne( { email: req.body.email})
 
     //check if the database has the email
     if (!user) return res.status(400).send('email or password is incorrect')
@@ -89,15 +95,26 @@ module.exports.login_post = async (req, res, next) => {
     // generateToken(user._id)
     const token = jwt.sign({ _id: user.id }, process.env.ACCESS_TOKEN_SECRET)
 
-    //add token to header (you can name header any name you want)
-    res.header('authToken', token).send(token)
+    // add token to header (you can name header any name you want)
+  
+    
 try {
-    await res.redirect('/user')
+   if(user){
+    await res.header('Authorization', token).send({
+        user,
+        token
+    })
+    return
+   }
+
+   
+    await res.redirect('/api/user/posts')
     
     console.log('login post middleware')
     next()
 }catch(err){
     res.sendStatus(403)
+    return
     console.log(err)
 }
    
@@ -108,7 +125,7 @@ try {
 module.exports.user_get = async (req, res, next) => {
     // const bearerHeader = await req.headers['authorization']
     
-    res.render('userDashboard')
+    res.render('signupSuccess')
     // console.log(bearerHeader)
     next()
 }
