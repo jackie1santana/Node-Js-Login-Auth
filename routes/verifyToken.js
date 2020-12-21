@@ -1,12 +1,10 @@
 const jwt = require('jsonwebtoken')
-const User = require('../model/database/Users')
-const {parse, stringify} = require('flatted')
 
 //add this to all private routes
 module.exports = async (req, res, next) => {
    
 
-    
+    // FIGURE OUT HOW TO PASS AUTHORIZATION FROM LOGIN TO PROTECTED ROUTE
  
         // const user = User.findOne( { email: req.body.email  })
     
@@ -25,16 +23,28 @@ module.exports = async (req, res, next) => {
         // token = jwt.sign({ _id: req.body.email === req.body._id }, process.env.ACCESS_TOKEN_SECRET)
         //401 is a resource we cannot access
 
-        console.log(token)
+        console.log('verified ' + token)
+
+
         if(!token) return res.status(401).send('Access Denied')
     
          jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
             if(err){
                 return next()
             }
-
+            
+            // WHEN EVER I USE BEARER TOKEN IN POSTMAN AUTH IS SENT TO console.log.BUT IF I DONT USE POSTMAN IT OWNT
             req.user = payload
-            next()
+            // res.status(200).send({
+            //     decodedToken: payload,
+            //     retrievedHeaderTokenfromBrowser: token
+            // })
+
+            console.log(payload) 
+            // STRINGIFY THIS AND PASS THRU REQ
+            console.log(payload._id)
+next()
+            
         })
         //verified variable returns the id number in user
        

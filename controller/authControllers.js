@@ -61,7 +61,8 @@ module.exports.signup_post = async (req, res, next) => {
      if (emailExist) return res.status(400).send('email already exist')
  
        
-     await res.status(201).send(user).redirect('/user')
+     await res.status(201).send(user)
+    //  .redirect('/user')
 
      console.log('sign up post')
     next()
@@ -77,7 +78,7 @@ module.exports.signup_post = async (req, res, next) => {
 module.exports.login_get = (req, res, next) => {
     res.render('login')
 
-    next()
+  
 }
 
 module.exports.login_post = async (req, res, next) => {
@@ -100,25 +101,36 @@ module.exports.login_post = async (req, res, next) => {
     
 try {
    if(user){
-    await res.header('Authorization', token).send({
+
+
+    // fetch('/user/api/posts', { 
+    //     method: 'post', 
+    //     headers: new Headers({
+    //       'Authorization': 'Bearer '+btoa('username:password'), 
+    //       'Content-Type': 'application/x-www-form-urlencoded'
+    //     }), 
+    //     body: 'A=1&B=2'
+    //   });
+  SET A COOKIE
+    await res.status(200).header('Authorization', token).send({
         user,
-        token
+        token,
+        authHeaderSentToBrowser: req.header('Authorization')
     })
-    return
+    
    }
 
-   
-    await res.redirect('/api/user/posts')
+  
+    // await res.redirect('/')
     
-    console.log('login post middleware')
-    next()
+    
+
 }catch(err){
-    res.sendStatus(403)
-    return
+   
     console.log(err)
 }
    
-
+next()
     
 }
 

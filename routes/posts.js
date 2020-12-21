@@ -9,12 +9,15 @@ const router = Router()
 
 
 router.get('/', verify, async (req, res) => {
+    // req.user ='5fd4004ec5124f12298b37f6'
     const user = await User.findOne({_id: req.user})
 
+    // CAN NOT READ Req.USER ..WATCH DEV ED
     
+    if(user) return res.status(200).send(user.email)
 
-    res.send(user.email)
-    console.log(user)
+    
+    console.log(req.user)
  
 })
 
