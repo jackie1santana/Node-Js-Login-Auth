@@ -4,6 +4,7 @@ const postRoute = require('./routes/posts')
 require('dotenv').config()
 const mongoose = require('mongoose');
 require('./controller/authControllers')
+const cookieParser = require('cookie-parser')
 
 
 const app = express()
@@ -13,6 +14,7 @@ const PORT = process.env.PORT
 app.use(express.static('public'));
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+app.use(cookieParser())
 
 app.set('view engine', 'ejs');
 

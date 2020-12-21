@@ -93,7 +93,7 @@ module.exports.login_post = async (req, res, next) => {
     if(!validPass) return res.status(400).send('email or password is incorrect')
 
     //create token
-    // generateToken(user._id)
+    // generateToken(user._id), httpOnly:true
     const token = jwt.sign({ _id: user.id }, process.env.ACCESS_TOKEN_SECRET)
 
     // add token to header (you can name header any name you want)
@@ -111,16 +111,16 @@ try {
     //     }), 
     //     body: 'A=1&B=2'
     //   });
-  SET A COOKIE
-    await res.status(200).header('Authorization', token).send({
+    
+    return res.status(200).cookie('authCookie', token, { maxAge: 1000 * 60 * 60 * 24, httpOnly:true }).send({
         user,
         token,
-        authHeaderSentToBrowser: req.header('Authorization')
+        authCookiesSentToBrowser: req.cookies.authCookie
     })
     
    }
 
-  
+  next()
     // await res.redirect('/')
     
     
